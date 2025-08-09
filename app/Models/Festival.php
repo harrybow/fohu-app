@@ -6,5 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Festival extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'year',
+    ];
+
+    public function phases()
+    {
+        return $this->hasMany(Phase::class);
+    }
+
+    public function participants()
+    {
+        return $this->hasMany(Participant::class);
+    }
 }

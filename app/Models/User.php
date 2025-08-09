@@ -45,4 +45,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function participants()
+    {
+        return $this->hasMany(Participant::class);
+    }
+
+    public function workEntries()
+    {
+        return $this->hasManyThrough(WorkEntry::class, Participant::class);
+    }
 }
