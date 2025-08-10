@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class WorkEntry extends Model
 {
@@ -23,5 +25,31 @@ class WorkEntry extends Model
     public function phase()
     {
         return $this->belongsTo(Phase::class);
+    }
+
+    /**
+     * Scope a query to only include entries within the given date range.
+     */
+    public function scopeForDateRange(Builder $query, $start = null, $end = null): Builder
+    {
+        if ($start) {
+            $query->whereDate('work_date', '>=', $start);
+        }
+
+        if ($end) {
+            $query->whereDate('work_date', '<=', $end);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope a query to aggregate durations grouped by date and participant.
+     */
+    public function scopeGroupedByDateAndParticipant(Builder $query): Builder
+    {
+        return $query
+            ->select('participant_id', 'work_date', DB::raw('SUM(duration) as total_duration'))
+            ->groupBy('participant_id', 'work_date');
     }
 }
